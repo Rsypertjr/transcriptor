@@ -18,9 +18,7 @@ Route::get('/', function () {
 });
 
 Route::get('/', function () {
-	$products = [];
 	$products = App\Product::all();
-	
 	$edit = "false";
 	return view('productSubmit',compact('products'),['edit' => $edit]);	
 	//return view('welcome');
