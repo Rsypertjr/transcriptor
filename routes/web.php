@@ -1,4 +1,5 @@
 <?php
+namespace Routes;
 use Illuminate\Http\Request;
 use App\Product;
 /*
@@ -18,7 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/', function () {
-	$products = App\Product::all();
+	$products = Product::all();
 	$edit = "false";
 	return view('productSubmit',compact('products'),['edit' => $edit]);	
 	//return view('welcome');
@@ -38,20 +39,20 @@ Route::post('/submit', function(Request $request){
 			->withErrors($validator);
 	}  */
 		
-	$product = new App\Product;
+	$product = new Product;
     $product->name = $request->input('name');
     $qt = $product->quantityInStock = $request->input('quantity');
     $ppI = $product->pricePerItem = $request->input('price');	
 	$product->totalValue = $qt * $ppI;	
 	$product->editing = 'No';
-	$checkForName = App\Product::where('name',$product->name)->get();
+	$checkForName = Product::where('name',$product->name)->get();
 	
 	if(count($checkForName) > 0)
-		App\Product::where('name',$product->name)->update(array('name' => $product->name));
+		Product::where('name',$product->name)->update(array('name' => $product->name));
     else		
 		$product->save();
 	
-	$products =  App\Product::all();
+	$products =  Product::all();
 	$productsJS = $products->toJson();
 	file_put_contents('JSONfile', json_encode($productsJS,TRUE));
 	
@@ -65,14 +66,14 @@ Route::post('/update',function(Request $request){
 	$pQty = $request->input('quantity');
 	$pPpi = $request->input('price');
 	$pId = $request->input('pId');
-	App\Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
-	App\Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
-	App\Product::where('id',$pId)->update(array('name' => $pname));
-	//App\Product::where('id',$pId)->update(array('editing' => 'No'));
+	Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
+	Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
+	Product::where('id',$pId)->update(array('name' => $pname));
+	//Product::where('id',$pId)->update(array('editing' => 'No'));
 	
 	$edit = "true";
-	$products = App\Product::all();
-	$edProds = App\Product::where('editing','Yes')->get();
+	$products = Product::all();
+	$edProds = Product::where('editing','Yes')->get();
 	foreach($edProds as $edProd){
 			$edit = "true";	
 			return view('productSubmit',compact('products','edProd'),['edit' => $edit]);	
@@ -84,14 +85,14 @@ Route::post('/delete',function(Request $request){
 	//$pQty = $request->input('quantity');
 	//$pPpi = $request->input('price');
 	//$pId = $request->input('pId');
-	//App\Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
-	//App\Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
-	App\Product::where('name',$pname)->delete();
-	//App\Product::where('id',$pId)->update(array('editing' => 'No'));
+	//Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
+	//Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
+	Product::where('name',$pname)->delete();
+	//Product::where('id',$pId)->update(array('editing' => 'No'));
 	
 	$edit = "true";
-	$products = App\Product::all();
-	$edProds = App\Product::where('editing','Yes')->get();
+	$products = Product::all();
+	$edProds = Product::where('editing','Yes')->get();
 	if(count($edProds ) > 0){
 					foreach($edProds as $edProd){
 							$edit = "true";	
@@ -109,12 +110,12 @@ Route::post('/edit', function(Request $request){
 
 	$edit = "false";
 	foreach($productIds as $key=>$value){				
-				$edProds = App\Product::where('id',$value)->get();
+				$edProds = Product::where('id',$value)->get();
 				
-				App\Product::where('id',$value)
+				Product::where('id',$value)
 							->update(array('editing' => 'Yes'));
 					
-				$products = App\Product::all();
+				$products = Product::all();
 				foreach($edProds as $edProd){
 					    $edit = "true";	
 						return view('productSubmit',compact('products','edProd'),['edit' => $edit]);	
