@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Http\Request;
-use \App\Product;
+use App\Product;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,8 +18,9 @@ Route::get('/', function () {
 });
 
 Route::get('/', function () {
-	//$products = \App\Product::all();
 	$products = [];
+	$products = App\Product::all();
+	
 	$edit = "false";
 	return view('productSubmit',compact('products'),['edit' => $edit]);	
 	//return view('welcome');
