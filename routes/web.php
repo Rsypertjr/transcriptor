@@ -1,5 +1,4 @@
 <?php
-namespace App;
 use Illuminate\Http\Request;
 
 /*
