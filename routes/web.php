@@ -1,5 +1,4 @@
 <?php
-namespace Routes;
 use Illuminate\Http\Request;
 use App\Product;
 /*
