@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Http\Request;
-use App\Product;
+use App\Repositories\ProductRepository;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,10 +18,10 @@ Route::get('/', function () {
 });
 
 Route::get('/', function () {
-	$products = Product::all();
+	$products =  new ProductRepository();
 	$edit = "false";
-	return view('productSubmit',compact('products'),['edit' => $edit]);	
-	//return view('welcome');
+	//return view('productSubmit',compact('products'),['edit' => $edit]);	
+	return view('welcome');
 });
 
 
