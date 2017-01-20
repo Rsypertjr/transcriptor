@@ -16,19 +16,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*
 Route::get('/', function () {
 	$products = \App\Product::all();
 	$edit = "false";
-	if(count($products > 0))
-		return view('productSubmit',compact('products'),['edit' => $edit]);
-	else
-	{
-		$products = '';
-		return view('productSubmit',compact('products'),['edit' => $edit]);
-	}
+	//return view('productSubmit',compact('products'),['edit' => $edit]);	
+	return view('welcome');
 });
-*/
+
 
 Route::post('/submit', function(Request $request){
 /*	$validator = Validator::make($request->all(),[
