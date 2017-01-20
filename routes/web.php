@@ -12,7 +12,11 @@ use Illuminate\Http\Request;
 */
 
 
+Route::get('/', function () {
+    return view('welcome');
+});
 
+/*
 Route::get('/', function () {
 	$products = \App\Product::all();
 	$edit = "false";
@@ -24,7 +28,7 @@ Route::get('/', function () {
 		return view('productSubmit',compact('products'),['edit' => $edit]);
 	}
 });
-
+*/
 
 Route::post('/submit', function(Request $request){
 /*	$validator = Validator::make($request->all(),[
