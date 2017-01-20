@@ -16,7 +16,13 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
 	$products = \App\Product::all();
 	$edit = "false";
-    return view('productSubmit',compact('products'),['edit' => $edit]);
+	if(count($products > 0))
+		return view('productSubmit',compact('products'),['edit' => $edit]);
+	else
+	{
+		$products = '';
+		return view('productSubmit',compact('products'),['edit' => $edit]);
+	}
 });
 
 
