@@ -65,13 +65,15 @@
 			
 			});
 		</script>
-      
+        <style>
+		</style>
     </head>
+
     <body>      
 
 		<h2 style="position:relative;width:auto;margin-left:45%">Laravel Test</h2>
 	   
-        <div class="content">
+        <div id="mainContainer" class="content">
 				 @if($edit == 'false')
 					<div class="container">
 						<form action="/submit" method="post">

@@ -17,6 +17,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
+Route::get('/cinp', function () {
+    return view('courseViewer');
+});
+
+
+Route::post('/course','CourseController@addCourse');
+
+Route::post('/report','CourseController@reportCard');
+
+Route::post('/createPDF','CourseController@createPDF');
+
+
+
+
+
 Route::get('/', function () {
 	$products = App\Product::all();
 	$edit = "false";
