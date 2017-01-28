@@ -24,7 +24,7 @@
 			jQuery(document).ready(function() {
 				$('#createPDF').on('submit',function(e){
 					e.preventDefault();
-					$('#pdfSubmit, #returnFront').css('display','none');
+					$('#pdfSubmit, #retFront').css('display','none');
 					
 					
 					$.ajaxSetup({
@@ -35,6 +35,7 @@
 					
 				    var htm_l = $('html').html();
 					var courseAttributes = $('#courseAttributes').val();
+					//alert(courseAttributes);
 					$.ajax({
 						url: "/createPDF",
 						type: "POST",
@@ -43,9 +44,14 @@
 							'courseAttributes': courseAttributes
 							
 						}, success: function(response) {
-							$('#pdfSubmit, #returnFront').css('display','block');
+							$('#pdfSubmit, #retFront').css('display','block');
 						}
 					});
+				});
+				
+				
+				$('#retFront').on('mousedown',function(){
+					$('form#returnFront').submit();
 				});
 			
 			});
@@ -53,17 +59,20 @@
         <style>
 			#pdfSubmit {
 				position:relative;
-				margin-left:16em;
+				float:left;
+				margin-left:27.5%;
 				font-size:1.5em;
+				width:auto;
 				top:0.25em;
 			}
 			
-			#returnFront{
+			#retFront{
 				position:relative;
 				float:left;
-				margin-left:17em;
-				top:-0.97em;				
-				font-size:1.25em;
+				width:auto;
+				margin-left:3%;
+				top:0.25em;				
+				font-size:1.5em;
 			}
 		</style>
     </head>
@@ -152,10 +161,11 @@
 						    @break;
 						@endforeach
 						<button id="pdfSubmit" type="submit" class="btn btn-default">Generate PDF of Transcript</button>
+				        <button id="retFront" type="button" class="btn btn-default">Return to Front</button>
+			
 				</form>	
-				<form id="returnFront" action="/" method="get">
+				<form id="returnFront" action="/cinp" method="get">
 					{!! csrf_field() !!}	
-					<button id="returnFront" type="submit" class="btn btn-default">Return to Front</button>
 				</form>
 				
 			

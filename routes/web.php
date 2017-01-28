@@ -24,6 +24,7 @@ Route::get('/cinp', function () {
 });
 
 
+
 Route::post('/course','CourseController@addCourse');
 
 Route::post('/report','CourseController@reportCard');

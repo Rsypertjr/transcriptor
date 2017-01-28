@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+//use Illuminate\Support\Facades\Storage;
 use App\Course;
 use App\Student;
 use App\GradeLevel;
@@ -33,7 +33,7 @@ class CourseController extends Controller
 		 $bookScore = array();
 		 $testScores = $request->input('testScores');
 		 $sumScores = 0;
-		 $stval = 1;
+		 $stval = 9;
 		 //echo count($testScores);
 		 for($i=$stval;$i<=10;$i++){
 			
@@ -200,11 +200,17 @@ class CourseController extends Controller
 		 
 		 
 		 $filename=$studentName."_"."Grade".$grade;
-		 $myProjectDirectory = base_path();	
-		 //echo $myProjectDirectory;
+		 $myProjectDirectory = base_path();
          $filePath = $myProjectDirectory.'/pdf/'.$filename.'.pdf';
 		 //Delete current file before storing new one
-		 Storage::delete('/pdf/'.$filename.'.pdf');
+		 //Storage::delete('/pdf/'.$filename.'.pdf');
+		 //Storage::delete($filePath);
+		 
+		 $path = base_path() .'/pdf/'.$filename.'.pdf';
+		 if(file_exists($path)) {
+			unlink($path);
+		 }
+		 
 		 $snappy = new Pdf($myProjectDirectory . '/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
 		 header('Content-Type: application/pdf');		 
          header('Content-Disposition: attachment; filename="file.pdf"');
