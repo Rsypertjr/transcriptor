@@ -33,7 +33,7 @@ class CourseController extends Controller
 		 $bookScore = array();
 		 $testScores = $request->input('testScores');
 		 $sumScores = 0;
-		 $stval = 9;
+		 $stval = 1;
 		 //echo count($testScores);
 		 for($i=$stval;$i<=10;$i++){
 			

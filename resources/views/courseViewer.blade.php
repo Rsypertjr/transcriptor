@@ -16,7 +16,7 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script>
 		    var noSelfTests = 1;
-			var noBooks = 9;
+			var noBooks = 1;
 			//var bookNumber = 0;
 			var courseScores = new Object();
 			var json = '';
