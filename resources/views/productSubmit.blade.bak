@@ -17,10 +17,10 @@
 		<script>
 			jQuery(document).ready(function() {
 			  
-              
+                  
 				$('#doEdit').css('display','none').css('background-color','white');	
 				$('#wantEdit').css('display','block');
-				//var name = $('form input#name').val();
+				var name = $('form input#name').val();
 				
 				$('[id^=edit], #doEdit').on('mouseover',function(){
 					$(this).css('background-color','lightgrey');
@@ -52,16 +52,19 @@
 						$(this).text('No, but Click for Yes');
 			
 				});
-				$('form#edits').on('submit',function(){	
-                        $('table tr td button:contains("Click for No")').each(function(){
-							 var id = $(this).attr("name"); //product id in name value
-							 $('form#edits')
-							   .append('<input type="hidden" name="id[]" value="'+ id +'">');
+				$('form#edits button').on('click',function(e){	
+                        e.preventDefault();				
+                        $('table tr td:contains("Yes, but Click")').each(function(){
+							 var id = $(this).attr("name");
+							 $('form#edits input').val(id);
 						 });
+						 
+						 $('form#edits').submit();
+					
 					});
 					
 				$('form#deleteItem button').on('click',function(){				        
-                         var name = $('form#editForm input#name').val()
+                         var name = $('form input#name').val()
 						 $('form#deleteItem')
 						   .append('<input type="hidden" name="name" value="'+ name +'">');
 					
@@ -69,20 +72,26 @@
 						 $('form#deleteItem').submit();
 					
 					});	
-			
+					
+				$('#editCol').on('submit',function(e){
+					e.preventDefault();
+				});
 			
 			});
 		</script>
-      
+        <style>
+		 
+		</style>
     </head>
+
     <body>      
 
 		<h2 style="position:relative;width:auto;margin-left:45%">Laravel Test</h2>
 	   
-        <div class="content">
+        <div id="mainContainer" class="content">
 				 @if($edit == 'false')
 					<div class="container">
-						<form id="subForm" action="/submit" method="post">
+						<form action="/submit" method="post">
 							{!! csrf_field() !!}
 							<div class="form-group">
 								<label for="title">Product Name</label>
@@ -97,14 +106,13 @@
 								<input type="number" step="any" class="form-control" id="price" name="price" placeholder="Price">
 							</div>
 							<button id="productSub" type="submit" class="btn btn-default">Submit</button>
-						
 						</form>
 					 </div>	
 					 <br><br>
 				@endif
 		        @if($edit == 'true')
 					<div class="container">
-						<form id="editForm" action="/update" method="post">
+						<form action="/update" method="post">
 							{!! csrf_field() !!}
 							<div class="form-group">
 								<label for="title">Edit Product Name</label>
@@ -151,9 +159,11 @@
 											<th>
 												<form id="edits" action="/edit" method="post">
 													{!! csrf_field() !!}
-													<span id="wantEdit">Want to Edit? Click Below!</span>
 													<button type="submit" id="doEdit">Click Here to Edit!</button>
+													<span id="wantEdit">Want to Edit? Click Below!</span>
+													<input type="hidden" name="id[]" value="">
 												</form>
+											</th>
 										</tr>
 									@foreach($products as $product)
 										<tr>
@@ -162,9 +172,9 @@
 											<td>{{ $product->pricePerItem }}</td>
 											<td>{{ $product->updated_at }}</td>
 											<td>{{ $product->totalValue }}</td>
-											<td id ="td".{{ $product->id }} name="{{ $product->id }}">
-												<form id="editCol".{{ $product->id }} action="/" method="get">
-													<button type="button" name="{{ $product->id }}"  id="edit".{{$product->name}}>No, but Click for Yes</button>
+											<td id ="td".{{ $product->id }} name="{{ $product->id }}"">
+												<form id="editCol" action="/" method="get">
+													<button type="button" id="edit".{{$product->name}}>No, but Click for Yes</button>
 											    </form>
 											</td>
 										</tr>
@@ -182,3 +192,4 @@
 	<meta name="csrf-token" content="{{ csrf_token() }}" />
     </body>
 </html>
+

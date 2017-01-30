@@ -83,9 +83,11 @@ Route::post('/update',function(Request $request){
 	$pQty = $request->input('quantity');
 	$pPpi = $request->input('price');
 	$pId = $request->input('pId');
+	$pTv = $pQty * $pPpi;	
 	App\Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
 	App\Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
 	App\Product::where('id',$pId)->update(array('name' => $pname));
+	App\Product::where('id',$pId)->update(array('totalValue' => $pTv));
 	//App\Product::where('id',$pId)->update(array('editing' => 'No'));
 	
 	$edit = "true";
