@@ -22,19 +22,19 @@
 				$('#wantEdit').css('display','block');
 				//var name = $('form input#name').val();
 				
-				$('[id^=edit], #doEdit').on('mouseover',function(){
+				$('[name^=editButton]').on('mouseover',function(){
 					$(this).css('background-color','lightgrey');
 				});
 				
-				$('[id^=edit], #doEdit').on('mouseleave',function(){
+				$('[name^=editButton]').on('mouseleave',function(){
 					$(this).css('background-color','white');
 				});
 				
-				$('[id^=edit]').on('mousedown',function(){
+				$('[name^=editButton]').on('mousedown',function(){
 					// name attribute contains id of product
-					
-					$(this).on('mouseup',function(){
-						if($('table tr td button:contains("Click for No")').length > 0)	{
+					$(this).text('Please Wait..');
+					/*$(this).on('mouseup',function(){
+						if($('table tr td button:contains("Yes")').length > 0)	{
 							$('#wantEdit').css('display','none');
 							$('#doEdit').css('display','block');
 							
@@ -43,34 +43,12 @@
 								$('#doEdit').css('display','none');
 								$('#wantEdit').css('display','block').text('Want to Edit? Click Below!');
 						}
-					});
+					});*/
 					
 					
-					if($(this).text() == 'No, but Click for Yes')				
-						$(this).text('Yes, but Click for No');
-					else if($(this).text() == 'Yes, but Click for No')
-						$(this).text('No, but Click for Yes');
-			
+				
 				});
-				$('form#edits').on('submit',function(){	
-                        $('table tr td button:contains("Click for No")').each(function(){
-							 var id = $(this).attr("name"); //product id in name value
-							 $('form#edits')
-							   .append('<input type="hidden" name="id[]" value="'+ id +'">');
-						 });
-					});
-					
-				$('form#deleteItem button').on('click',function(){				        
-                         var name = $('form#editForm input#name').val()
-						 $('form#deleteItem')
-						   .append('<input type="hidden" name="name" value="'+ name +'">');
-					
-						 
-						 $('form#deleteItem').submit();
-					
-					});	
-			
-			
+		
 			});
 		</script>
       
@@ -96,7 +74,7 @@
 								<label for="title">Price per Item</label>
 								<input type="number" step="any" class="form-control" id="price" name="price" placeholder="Price">
 							</div>
-							<button id="productSub" type="submit" class="btn btn-default">Submit</button>
+							<button name="productSub" id="productSub"  type="submit" class="btn btn-default">Submit</button>
 						
 						</form>
 					 </div>	
@@ -123,9 +101,10 @@
 							
 						</form>
 						
-						<form id="deleteItem" style="position:relative;float:left;margin-top:-2.55em;margin-left:10em" id="delInput" action="/delete" method="post">
+						<form id="deleteItem" action='/delete'  style="position:relative;float:left;margin-top:-2.55em;margin-left:10em" id="delInput" action="/delete" method="post">
 								{!! csrf_field() !!}
-								<button class="btn btn-default">Delete this Item</button>
+								<input type="hidden" name="name" value="{{$edProd->name}}">
+								<button type="submit" class="btn btn-default">Delete this Item</button>
 						</form>
 						<br>
 						<form id="moreInput" action="/" method="get">
@@ -149,11 +128,9 @@
 											<th>Datetime Submitted</th>								
 											<th>Total Value</th>
 											<th>
-												<form id="edits" action="/edit" method="post">
-													{!! csrf_field() !!}
+												
 													<span id="wantEdit">Want to Edit? Click Below!</span>
-													<button type="submit" id="doEdit">Click Here to Edit!</button>
-												</form>
+											</th>
 										</tr>
 									@foreach($products as $product)
 										<tr>
@@ -162,9 +139,11 @@
 											<td>{{ $product->pricePerItem }}</td>
 											<td>{{ $product->updated_at }}</td>
 											<td>{{ $product->totalValue }}</td>
-											<td id ="td".{{ $product->id }} name="{{ $product->id }}">
-												<form id="editCol".{{ $product->id }} action="/" method="get">
-													<button type="button" name="{{ $product->id }}"  id="edit".{{$product->name}}>No, but Click for Yes</button>
+											<td>
+												<form action="/edit" name="editProduct{{$product->id}}" method="post">
+													{!! csrf_field() !!}						
+                                                    <input type="hidden" name="name" value="{{ $product->name}}"></input>												
+													<button type="submit" name="editButton{{$product->id}}">Edit</button>
 											    </form>
 											</td>
 										</tr>

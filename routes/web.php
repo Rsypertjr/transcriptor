@@ -82,8 +82,11 @@ Route::post('/update',function(Request $request){
 	$pname = $request->input('name');
 	$pQty = $request->input('quantity');
 	$pPpi = $request->input('price');
-	$pId = $request->input('pId');
-	$pTv = $pQty * $pPpi;	
+	$aProduct = array();
+	$aProduct = App\Product::where('name',$pname)->get()->toArray();
+	//print_r($aProduct[0]);
+	$pId = $aProduct[0]['id'];
+	$pTv = $pQty*$pPpi;
 	App\Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
 	App\Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
 	App\Product::where('id',$pId)->update(array('name' => $pname));
@@ -101,13 +104,7 @@ Route::post('/update',function(Request $request){
 
 Route::post('/delete',function(Request $request){
 	$pname = $request->input('name');
-	//$pQty = $request->input('quantity');
-	//$pPpi = $request->input('price');
-	//$pId = $request->input('pId');
-	//App\Product::where('id',$pId)->update(array('quantityInStock' => $pQty));
-	//App\Product::where('id',$pId)->update(array('pricePerItem' => $pPpi));
 	App\Product::where('name',$pname)->delete();
-	//App\Product::where('id',$pId)->update(array('editing' => 'No'));
 	
 	$edit = "true";
 	$products = App\Product::all();
@@ -125,21 +122,18 @@ Route::post('/delete',function(Request $request){
 });
 
 Route::post('/edit', function(Request $request){
-	$productIds = $request->input("id");
-
+	$name = $request->input("name");
+	$edProds = array();
+	$edProd = array();
 	$edit = "false";
-	foreach($productIds as $key=>$value){				
-				$edProds = App\Product::where('id',$value)->get();
-				
-				App\Product::where('id',$value)
+				$edProds = App\Product::where('name',$name)->get();
+				//print_r($edProd);
+				App\Product::where('name',$name)
 							->update(array('editing' => 'Yes'));
 					
 				$products = App\Product::all();
 				foreach($edProds as $edProd){
-					    $edit = "true";	
-						return view('productSubmit',compact('products','edProd'),['edit' => $edit]);	
-				}
-			}
-	   
-	
+					$edit = "true";
+					return view('productSubmit',compact('products','edProd'),['edit' => $edit]);	
+			    }
 });
