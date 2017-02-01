@@ -102,14 +102,16 @@
 						</form>
 						
 						<form id="deleteItem" action='/delete'  style="position:relative;float:left;margin-top:-2.55em;margin-left:10em" id="delInput" action="/delete" method="post">
-								{!! csrf_field() !!}
+							{!! csrf_field() !!}
+							<div class="form-group">	
 								<input type="hidden" name="name" value="{{$edProd->name}}">
-								<button type="submit" class="btn btn-default">Delete this Item</button>
+								<button type="submit" name="delButton" id="delButton" class="btn btn-default">Delete this Item</button>
+							</div>
 						</form>
 						<br>
 						<form id="moreInput" action="/" method="get">
 								{!! csrf_field() !!}
-								<button type="submit" class="btn btn-default">Back to More Input</button>
+								<button type="submit" name="backButton" id="backButton" class="btn btn-default">Back to More Input</button>
 						</form>
 					 </div>	
 					 <br><br>

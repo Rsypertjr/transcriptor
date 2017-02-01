@@ -16,7 +16,7 @@ class SubmitTest extends TestCase
 		$input = ['id[0]' => 'computer'];
 		
         $this->visit('/')
-            ->type('computer', 'name')
+            ->type('computer2', 'name')
             ->type('3', 'quantity')
             ->type('500', 'price')
             ->press('productSub')
@@ -24,14 +24,24 @@ class SubmitTest extends TestCase
 			->see('1500')  // see result in table
 			->press('Edit')  //Select edit of entry
 			->seePageIs('/edit')  //see edit page
-			->type('computer', 'name')  // Perform editing update
+			->type('computer2', 'name')  // Perform editing update
             ->type('4', 'quantity')
             ->type('600', 'price')
 			->press('Submit Edit')			
             ->seePageIs('/update')
 			->see('2400') //confirm update
-			->press('Delete this item')					
-            ->seePageIs('/delete');
+			->press('backButton')
+			->see('Submit')
+			->type('couch2', 'name')
+            ->type('3', 'quantity')
+            ->type('350.50', 'price')
+            ->press('productSub')
+			->see('1051.5')
+			->press('Edit')  //Select edit of entry
+			->seePageIs('/edit')  //see edit page
+			->press('delButton')					
+            ->seePageIs('/delete') //test back button
+			->see('1051.5');    // see front page
 			
 			//$this->assertRedirectedTo('/edit', $with = []);
 			//->seePageIs('/edit')  //see if goes to edit page
