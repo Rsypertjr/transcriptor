@@ -199,7 +199,7 @@ class CourseController extends Controller
 		 $studentName = $attributes->studentName;
 		 
 		 
-		 $filename=$studentName."_"."Grade".$grade;
+		 $filename=$studentName."_"."Transcript";
 		 $myProjectDirectory = base_path();
          $filePath = $myProjectDirectory.'/pdf/'.$filename.'.pdf';
 		 //Delete current file before storing new one

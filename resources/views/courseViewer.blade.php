@@ -16,12 +16,10 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script>
 		    var noSelfTests = 1;
-			var noBooks = 1;
-			//var bookNumber = 0;
-			var courseScores = new Object();
+			var noBooks = 1;		
 			var json = '';
 			jQuery(document).ready(function() {
-			        $('#bkScore').css('display','block').text("Calculate Book #"+noBooks.toString()+" Score");
+			        $('#bkScore a').css('display','block').text("Calculate Book "+noBooks.toString()+" Score");
 			
 					
 			        $('#finalTest, .selfTestScores, .courseInput').on('mousedown',function(){
@@ -30,15 +28,30 @@
 			  
 					$('#stScores').css('display','none'); 					
 					$('#courseSubmit, #bookSubmit').css('display','none');
-					$('#bkScore').on('mousedown',function(){
-						  $('#stLabel').text('Input Self Tests Scores Below for Book #'+noBooks.toString());						
-							
-						  $('#newStudentHdr').css('display','none');
-						  $('#reportCard').css('display','none');
-						  $('#stScores').css('display','block');   
-						  $('#bookSubmit').css('top','1em');
-						  $(this).css('display','none');
-						  $('#bookSubmit').css('display','block').text("Submit Book"+noBooks.toString()+" Score");
+					$('#bkScore').on('mousedown',function(e){
+						  if($('#studentName').val() == '')
+						  {
+							  alert("Need Student Name Input Please");
+						  }
+						  else if($('#gradeLevel').val() == '')
+						  {
+							  alert("Need Grade Input Please");
+						  }
+						  else if($('#courseName').val() == '')
+						  {
+							  alert("Need Course Name Input Please");
+						  }						  
+						  else{
+								  $('#stLabel').text('Input Self Tests Scores Below for Book '+noBooks.toString());						
+									
+								  $('#newStudentHdr').css('display','none');
+								  $('#reportCard').css('display','none');
+								  $('#stScores').css('display','block');   
+								  $('#bookSubmit').css('top','1em');
+								  $(this).css('display','none');
+								  $('#bookSubmit').css('display','block');
+								  $('#bookSubmit a').text("Submit Book"+(noBooks).toString()+" Score");
+						  }
 					});
 					
 					$('#bookSubmit').on('mousedown',function(){						
@@ -69,16 +82,12 @@
 						$('#selfTest4').val(0);
 						$('#selfTest5').val(0);
 						$('#finalTest').val(0);  
-						json = JSON.stringify(courseScores);
-						//alert(json);
 						
-					    //$('#bookSubmit').css('top','1em');
-					    
 						noSelfTests++;
 						//alert(noSelfTests.toString());
 						++noBooks;
 						if(noBooks == 11){
-							$('#stScores, #bookSubmit').css('display','block');  
+							$('#stScores').css('display','block');  
                             $('#studentName').prop('disabled',false);
 						    $('#gradeLevel').prop('disabled',false);
 						    $('#courseName').prop('disabled',false);                            
@@ -87,8 +96,9 @@
 						    $('#courseForm').submit();
 						}
 						else{
-							$('#bookSubmit').css('display','block').text("Submit Book #"+(noBooks).toString()+" Score");
-							$('#stLabel').text('Input Self Tests Scores Below for Book #'+noBooks.toString());						
+							$('#bookSubmit').css('display','block');
+							$('#bookSubmit a').css('display','block').text('Submit Book '+(noBooks).toString()+' Score');
+							$('#stLabel').text('Input Self Tests Scores Below for Book '+noBooks.toString());						
 							$('#bkScore').css('display','none');
 						}
 						
@@ -170,11 +180,11 @@
 								<input type="text" class="form-control courseInput" id="courseName" name="courseName" placeholder="Name of Course">
 							</div>
 							<div class="form-group">
-								<button type="button" id="bkScore" class="btn btn-default">Calculate Book1 Score</button>
+								<button type="button" id="bkScore" class="btn btn-default"><a id="bkScTag" style="text-decoration:none">Calculate Book1 Score</a></button>
 								<button type="button" id="reportCard" class="btn btn-default">See Report Card</button>
 							</div>
 							<div id="stScores" class="form-group">
-								<label id="stLabel" for="title">Input Self Test Scores Below for Book #1</label>
+								<label id="stLabel" for="title">Input Self Test Scores Below for Book 1</label>
 								<input type="number" step="any" class="form-control selfTestScores" id="selfTest1" name="selfTest1" value="0" placeholder="Self Test #1">
 							    <input type="number" step="any" class="form-control selfTestScores" id="selfTest2" name="selfTest2" value="0" placeholder="Self Test #2">
 							    <input type="number" step="any" class="form-control selfTestScores" id="selfTest3" name="selfTest3" value="0" placeholder="Self Test #3">
@@ -185,7 +195,7 @@
 								<input type="number" step="any" class="form-control" id="finalTest" name="finalTest" value="0" placeholder="Final Test">
 							
 							</div>
-							<button type="button" id="bookSubmit" class="btn btn-default">Submit Book Score</button>
+							<button type="button" id="bookSubmit" class="btn btn-default"><a id="bkSubTag" style="text-decoration:none">Submit Book Score</a></button>
 							<button id="courseSubmit" type="submit" class="btn btn-default">Submit Course Score</button>
 						</form>
 						<form id="reportForm" action="/report" method="post">

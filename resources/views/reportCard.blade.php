@@ -126,13 +126,14 @@
 											<th>6th Grade</th>	
 											<th>7th Grade</th>
 											<th>8th Grade</th>
-											<th>9th Grade</th>								
+											<th>9th Grade</th>		
 											<th>10th Grade</th>	
 											<th>11th Grade</th>
 											<th>12th Grade</th>
 										</tr>
 									  @foreach($students as $student)
 										<tr>
+										    <td>{{ $student->name}}</td>
 											<td>{{ $student->firstGradeScore}}</td>
 											<td>{{ $student->secondGradeScore}}</td>
 											<td>{{ $student->thirdGradeScore}}</td>
