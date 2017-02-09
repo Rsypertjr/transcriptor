@@ -3,6 +3,7 @@
 /storage/*.key
 /vendor
 /source
+/java
 /pdf
 /.idea
 Homestead.json
