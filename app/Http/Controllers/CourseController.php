@@ -23,7 +23,6 @@ class CourseController extends Controller
 		 $gradeLevels = array();
 		 $gradeLevel = '';
 		 $courseNames = array();
-		 $bookNumbers = array();
 		 $selfTests1 = array();
 		 $selfTests2 = array();
 		 $selfTests3 = array();
@@ -31,25 +30,58 @@ class CourseController extends Controller
 		 $selfTests5 = array();
 		 $finalTests = array();
 		 $bookScore = array();
-		 $testScores = $request->input('testScores');
+		 $testScores = json_decode($request->input('testScores'),true);
 		 $sumScores = 0;
 		 $stval = 1;
-		 //echo count($testScores);
 		 for($i=$stval;$i<=10;$i++){
 			
-			 $testScoresArr = explode(",",$testScores[$i][0]);
-			 $studentNames[$i] = $testScoresArr[0];
+			 //$testScoresArr = explode(",",$testScores[$i][0]);
+			 switch($i){
+				 case 1:
+				 $course = $testScores["course1"];
+				 break;
+				 case 2:
+				 $course = $testScores["course2"];
+				 break;
+				 case 3:
+				 $course = $testScores["course3"];
+				 break; 
+				 case 4:
+				 $course = $testScores["course4"];
+				 break; 
+				 case 5:
+				 $course = $testScores["course5"];
+				 break; 
+				 case 6:
+				 $course = $testScores["course6"];
+				 break;
+				 case 7:
+				 $course = $testScores["course7"];
+				 break;
+				 case 8:
+				 $course = $testScores["course8"];
+				 break; 
+				 case 9:
+				 $course = $testScores["course9"];
+				 break; 
+				 case 10:
+				 $course = $testScores["course10"];
+				 break; 
+				 default:
+				 ;
+			 }
+			 
+			 $studentNames[$i] = $course["studentName"];
 			 $studentName = $studentNames[$i];
-			 $gradeLevels[$i] = $testScoresArr[1];
+			 $gradeLevels[$i] = $course["gradeLevel"];
 			 $gradeLevel = $gradeLevels[$i];
-			 $courseNames[$i] = $testScoresArr[2];
-			 $bookNumbers[$i] = $testScoresArr[3];
-			 $selfTests1[$i] = $testScoresArr[4];
-			 $selfTests2[$i] = $testScoresArr[5];
-			 $selfTests3[$i] = $testScoresArr[6];
-			 $selfTests4[$i] = $testScoresArr[7];
-			 $selfTests5[$i] = $testScoresArr[8];
-			 $finalTests[$i] = $testScoresArr[9];
+			 $courseNames[$i] = $course["courseName"];
+			 $selfTests1[$i] = $course["selfTest1"];
+			 $selfTests2[$i] = $course["selfTest2"];
+			 $selfTests3[$i] = $course["selfTest3"];
+			 $selfTests4[$i] = $course["selfTest4"];
+			 $selfTests5[$i] = $course["selfTest5"];
+			 $finalTests[$i] = $course["finalTest"];
 			 
 			
 			 
@@ -65,23 +97,6 @@ class CourseController extends Controller
 			else
 				$studentId = $checkStudent[0]['id'];
 			
-				
-				
-			/* $GradeLevel = new GradeLevel;	
-						 
-			 $courseName = $courseNames[$i];
-			 //echo $courseName;
-			 //$GradeLevel->gradeLevel = $gradeLevels[$i];
-			 $gradeLev = Course::where('student_id',$studentId)
-									->where('courseName',$courseName)
-									->get()->toArray();		
-
-			 print_r($gradeLev[0]['gradeLevel']);									
-			 //$GradeLevel->student_id = (int)$gradeLev[0]['id'];
-			// $GradeLevel->save();
-			 */
-			 
-			 
 			 $checkCourse = Course::where(['gradelevel' => $gradeLevels[$i],
 										  'courseName' => $courseNames[$i],
 										  'studentName' => $studentNames[$i]])
@@ -159,7 +174,7 @@ class CourseController extends Controller
 		$gradeScores = array();	
 		$ends = array('first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth');	
         $sumGradeScore = 0;		
-		$gradeScores[$gradeLevel] = $ends[$gradeLevel].'GradeScore';
+		$gradeScores[$gradeLevel] = $ends[$gradeLevel-1].'GradeScore';
 			
 		foreach($coursesPerGrade as $course){
 			

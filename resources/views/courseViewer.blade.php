@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+		<!--<meta name="_token" content="{!! csrf_token() !!}" /> -->
+	    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
         <title>Transcriptor</title>
 
@@ -14,13 +16,25 @@
 		<link href="/css/app.css" rel="stylesheet">
 		
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-		<script>
+		<script type="text/javascript">
+		
+		    $.ajaxSetup({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
 		    var noSelfTests = 1;
 			var noBooks = 1;		
 			var json = '';
-			jQuery(document).ready(function() {
-			        $('#bkScore a').css('display','block').text("Calculate Book "+noBooks.toString()+" Score");
+			var courseScore = {studentName:"",gradeLevel:"",courseName:"",
+								selfTest1:0,selfTest2:0,selfTest3:0,selfTest4:0,selfTest5:0,finalTest:0};
 			
+			var courseScores = {course1:"",course2:"",course3:"",course4:"",course5:"",course6:"",
+								course7:"",course8:"",course9:"",course10:""};
+								
+			jQuery(document).ready(function() {
+			        $('#bkScore').css('display','block').text("Calculate Book "+noBooks.toString()+" Score");
+			       
 					
 			        $('#finalTest, .selfTestScores, .courseInput').on('mousedown',function(){
 						$(this).val('');
@@ -49,10 +63,10 @@
 								  $('#stScores').css('display','block');   
 								  $('#bookSubmit').css('top','1em');
 								  $(this).css('display','none');
-								  $('#bookSubmit').css('display','block');
-								  $('#bookSubmit a').text("Submit Book"+(noBooks).toString()+" Score");
+								  $('#bookSubmit').css('display','block').text("Submit Book "+(noBooks).toString()+" Score");
 						  }
 					});
+					
 					
 					$('#bookSubmit').on('mousedown',function(){						
 						
@@ -61,21 +75,53 @@
 						$('#studentName').prop('disabled',true);
 						$('#gradeLevel').prop('disabled',true);
 						$('#courseName').prop('disabled',true);
-						var bookScores = [];
-						bookScores.push($('#studentName').val());
-						bookScores.push($('#gradeLevel').val());
-						bookScores.push($('#courseName').val());
-						bookScores.push(noBooks);
-						bookScores.push($('#selfTest1').val());
-						bookScores.push($('#selfTest2').val());
-						bookScores.push($('#selfTest3').val());
-						bookScores.push($('#selfTest4').val());
-						bookScores.push($('#selfTest5').val());
-						bookScores.push($('#finalTest').val());
-						//json = JSON.stringify(bookScores);
-						//alert(json);
-						$('#courseForm').append('<input type="hidden" name="testScores['+noBooks.toString()+'][]" value="'+ bookScores +'"></input>');
-					    
+					
+						
+						courseScore.studentName = $('#studentName').val();
+						courseScore.gradeLevel = $('#gradeLevel').val();
+						courseScore.courseName = $('#courseName').val();
+						courseScore.selfTest1 = $('#selfTest1').val();
+						courseScore.selfTest2 = $('#selfTest2').val();
+						courseScore.selfTest3 = $('#selfTest3').val();
+						courseScore.selfTest4 = $('#selfTest4').val();
+						courseScore.selfTest5 = $('#selfTest5').val();
+						courseScore.finalTest = $('#finalTest').val();  
+					    	
+						switch(noBooks)	{
+							case 1:
+							courseScores.course1 = courseScore;
+							break;
+							case 2:
+							courseScores.course2 = courseScore;
+							break;
+							case 3:
+							courseScores.course3 = courseScore;
+							break;
+							case 4:
+							courseScores.course4 = courseScore;
+							break;
+							case 5:
+							courseScores.course5 = courseScore;
+							break;
+							case 6:
+							courseScores.course6 = courseScore;
+							break;
+							case 7:
+							courseScores.course7 = courseScore;
+							break;
+							case 8:
+							courseScores.course8 = courseScore;
+							break;
+							case 9:
+							courseScores.course9 = courseScore;
+							break;
+							case 10:
+							courseScores.course10 = courseScore;
+							break;
+							default:
+							;
+						}
+							
 					    $('#selfTest1').val(0);
 						$('#selfTest2').val(0);
 						$('#selfTest3').val(0);
@@ -87,17 +133,24 @@
 						//alert(noSelfTests.toString());
 						++noBooks;
 						if(noBooks == 11){
-							$('#stScores').css('display','block');  
-                            $('#studentName').prop('disabled',false);
-						    $('#gradeLevel').prop('disabled',false);
-						    $('#courseName').prop('disabled',false);                            
+							json = JSON.stringify(courseScores);
+							//alert(json);
+							$('#courseForm').append('<input type="hidden" name="testScoresJson" value="'+ json +'"></input>');
+					    
+							$('#stScores').css('display','none');  
+							$('#bkScore').css('display','block');
+							$('#reportCard').css('display','block');
+                            $('#studentName').prop('disabled',false).val('');
+						    $('#gradeLevel').prop('disabled',false).val('');
+						    $('#courseName').prop('disabled',false).val('');                            
 							$('#newStudentHdr').css('display','block');		
-							$('#bookSubmit').css('display','none');
-						    $('#courseForm').submit();
+							$('#bookSubmit').css('display','none');	
+						    //$('#courseForm').submit();
+							
+							$.post( "/course", {"testScores":json});
 						}
 						else{
-							$('#bookSubmit').css('display','block');
-							$('#bookSubmit a').css('display','block').text('Submit Book '+(noBooks).toString()+' Score');
+							$('#bookSubmit').css('display','block').text('Submit Book '+(noBooks).toString()+' Score');
 							$('#stLabel').text('Input Self Tests Scores Below for Book '+noBooks.toString());						
 							$('#bkScore').css('display','none');
 						}
@@ -180,7 +233,7 @@
 								<input type="text" class="form-control courseInput" id="courseName" name="courseName" placeholder="Name of Course">
 							</div>
 							<div class="form-group">
-								<button type="button" id="bkScore" class="btn btn-default"><a id="bkScTag" style="text-decoration:none">Calculate Book1 Score</a></button>
+								<button type="button" id="bkScore" class="btn btn-default">Calculate Book 1 Score</button>
 								<button type="button" id="reportCard" class="btn btn-default">See Report Card</button>
 							</div>
 							<div id="stScores" class="form-group">
@@ -195,7 +248,7 @@
 								<input type="number" step="any" class="form-control" id="finalTest" name="finalTest" value="0" placeholder="Final Test">
 							
 							</div>
-							<button type="button" id="bookSubmit" class="btn btn-default"><a id="bkSubTag" style="text-decoration:none">Submit Book Score</a></button>
+							<button type="button" id="bookSubmit" class="btn btn-default">Submit Book Score</button>
 							<button id="courseSubmit" type="submit" class="btn btn-default">Submit Course Score</button>
 						</form>
 						<form id="reportForm" action="/report" method="post">
@@ -206,8 +259,7 @@
 			
         </div>
 		
-	<!--<meta name="_token" content="{!! csrf_token() !!}" /> -->
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
+	
     </body>
 </html>
 
