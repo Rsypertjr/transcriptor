@@ -31,6 +31,12 @@ Route::post('/report','CourseController@reportCard');
 
 Route::post('/createPDF','CourseController@createPDF');
 
+Route::post('/storeJSF','CourseController@storeJSON');
+
+Route::post('/checkStudent','CourseController@checkStudent');
+
+Route::post('/getStudent','CourseController@getStudent');
+
 
 
 
@@ -137,3 +143,6 @@ Route::post('/edit', function(Request $request){
 					return view('productSubmit',compact('products','edProd'),['edit' => $edit]);	
 			    }
 });
+
+
+

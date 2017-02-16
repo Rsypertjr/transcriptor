@@ -13,6 +13,8 @@ class SubmitTest extends TestCase
      *
      * @return void
      */
+
+	 
     public function testExample()
     {				
         $this->visit('/')
@@ -40,15 +42,19 @@ class SubmitTest extends TestCase
             ->type('3', 'quantity')
             ->type('350.50', 'price')
             ->press('productSub')
+			->seePageIs('/submit')
 			->see('1051.5')
 			->press('Edit')  //Select edit of entry
 			->seePageIs('/edit')  //see edit page
-			->press('delButton')		
+			->press('delButton')	
+            ->seePageIs('/delete')			
             ->notSeeInDatabase('products', ['name' => 'computer2',
-										 'quantityInStock' => '4',
-										 'pricePerItem' => '600'])			
-            ->seePageIs('/delete') //test back button
+										 'quantityInStock' => '3',
+										 'pricePerItem' => '500'])	
 			->see('1051.5')
 			->dontSee('1500');    // see front page		
 	}
+	
+
+	
 }

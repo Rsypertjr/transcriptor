@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage;
 use App\Course;
 use App\Student;
 use App\GradeLevel;
@@ -12,7 +12,86 @@ use Knp\Snappy\Pdf;
 
 
 class CourseController extends Controller
-{
+{	
+	public function getStudent(Request $request){		
+		$studentAttr = json_decode($request->input('studentAttr'),true);
+		$studentName = $studentAttr['studentName'];
+		$grade = $studentAttr['gradeLevel'];
+		$course = $studentAttr['courseName'];		
+		
+		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$grade."_".$course))).".txt";
+		//echo $fileName;
+		$filePath = storage_path('app/'.$fileName);
+		$fileContent = file_get_contents($filePath);
+		$content = json_decode($fileContent);
+		
+		echo json_encode(array('course1'=>$content->course1,'course2'=>$content->course2,
+							'course3'=>$content->course3,'course4'=>$content->course4,
+							'course5'=>$content->course5,'course6'=>$content->course6,
+							'course7'=>$content->course7,'course8'=>$content->course8,
+							'course9'=>$content->course9,'course10'=>$content->course10));	
+	}
+	
+	
+	public function storeJSON(Request $request){	
+	
+		$jaySonObj = json_decode($request->input('jaySonObj'),true);
+		$studentName = $jaySonObj['course1']['studentName'];
+		$grade = $jaySonObj['course1']['gradeLevel'];
+		$course = $jaySonObj['course1']['courseName'];
+		
+		//print_r($jaySonObj);
+		$jsonString = json_encode($jaySonObj);
+		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$grade."_".$course))).".txt";
+		echo $fileName;
+		//if(file_exists($filePath)) {
+		//	unlink($filePath);
+		// }
+		 
+		$result = Storage::put($fileName, $jsonString);
+		echo $result;
+		echo $jsonString;
+		return view('courseViewer');
+		
+	}
+	 
+	 public function checkStudent(Request $request){
+		 $studentAttr = json_decode($request->input('studentAttr'),true);
+		 //print_r($studentAttr);
+		 $studentName = $studentAttr['studentName'];
+		 $grade = $studentAttr['gradeLevel'];
+		 $course = $studentAttr['courseName'];
+		 
+		 $checkCourse = Course::where(['gradelevel' => $grade,
+									   'courseName' => $course,
+									   'studentName' => $studentName])
+								  ->get();								  
+		 
+		 $fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$grade."_".$course))).".txt";
+		 $filePath = storage_path('app/'.$fileName);
+		 //echo $filePath;
+		 //echo file_exists($filePath);
+		 $noRecord = false;
+	     //echo count($checkCourse);				  
+		 if(count($checkCourse) > 0)
+		 {
+			 $isDbRecord = true;
+			 $isFileRecord = false;			
+			 echo json_encode(array('noRecord' => $noRecord,'isDbRecord'=>$isDbRecord,'isFileRecord'=>$isFileRecord,'studentAttr'=>$studentAttr));
+		  }
+		 else if(file_exists($filePath)) {
+			 $isDbRecord = false;
+			 $isFileRecord = true;
+			 echo json_encode(array('noRecord' => $noRecord,'isDbRecord'=>$isDbRecord,'isFileRecord'=>$isFileRecord,'studentAttr'=>$studentAttr));			
+		 }
+		 else {
+			 $noRecord = true;
+			 echo json_encode(array('noRecord' => $noRecord,'studentAttr'=>$studentAttr));
+		 }	
+	 }
+	 
+	
+	
      public function addCourse(Request $request){
 		 $testScores = array();
 		 $testScoresArr = array();
@@ -31,6 +110,7 @@ class CourseController extends Controller
 		 $finalTests = array();
 		 $bookScore = array();
 		 $testScores = json_decode($request->input('testScores'),true);
+		 print_r($testScores);
 		 $sumScores = 0;
 		 $stval = 1;
 		 for($i=$stval;$i<=10;$i++){

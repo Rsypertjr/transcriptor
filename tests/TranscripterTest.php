@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 class TranscripterTest extends TestCase
 {
 	//use DatabaseMigrations;
-	//use DatabaseTransactions;
+	use DatabaseTransactions;
     /**
      * A basic test example.
      *
