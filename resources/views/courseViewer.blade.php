@@ -137,47 +137,47 @@
 						courseScore.selfTest4 = $('#selfTest4').val();
 						courseScore.selfTest5 = $('#selfTest5').val();
 						courseScore.finalTest = $('#finalTest').val(); 
-											
+												
 						switch(noBooks)	{
 							case 1:
-								courseScores.course1 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course1 = courseScore;
 								break;
 							case 2:
-								courseScores.course2 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+							    courseScores.course2  = courseScore;
 								break;
 							case 3:
-								courseScores.course3 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course3  = courseScore;
 								break;
 							case 4:
-								courseScores.course4 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course4  = courseScore;
 								break;
 							case 5:
-								courseScores.course5 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+							    courseScores.course5  = courseScore;
 								break;
 							case 6:
-								courseScores.course6 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course6  = courseScore;
 								break;
 							case 7:
-								courseScores.course7 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course7  = courseScore;
 								break;
 							case 8:
-								courseScores.course8 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course8  = courseScore;
 								break;
-							case 9:								
-								courseScores.course9 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+							case 9:	
+								courseScores.course9  = courseScore;
 								break;
 							case 10:
-								courseScores.course10 = $.parseJSON('{studentName:"",gradeLevel:"",courseName:"",selfTest1:"0",selfTest2:"0",selfTest3:"0",selfTest4:"0",selfTest5:"0",finalTest:"0"}');
+								courseScores.course10  = courseScore;
 								break;
 							default:
 								;
 						}
 							
-					
+			
 						
 						noSelfTests++;
 						json = JSON.stringify(courseScores);
-						//alert(json);
+						alert(json);
 						
                         // Reset inputs						
 						$('#selfTest1').val(0);
