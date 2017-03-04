@@ -90,7 +90,6 @@ class CourseController extends Controller
 			$finalTestScore = $jaySonObj['book'.$i]['finalTest'];
 			if($selfTestSum > 0){
 			$bookScore[$i] = floatval($finalTestScore)*0.50 + (floatval($selfTestSum)/floatval($numSelfTest))*0.50;
-			//echo $bookScore[$i];
 			$numBooks++;
 			$bookScoreSum += $bookScore[$i];
 			Course::where(['gradelevel' => $gradeLevel,
@@ -115,25 +114,17 @@ class CourseController extends Controller
 		$gradeScores[$gradeLevel] = $ends[$gradeLevel-1].'GradeScore';
 			
 		foreach($coursesPerGrade as $course){
-			//echo $gradeScores[$gradeLevel];
 			$sumGradeScore += $course->finalScore;
-			//echo $sumGradeScore;	
 		}					  
 	    //Calculate Grade Scores over all courses and put in Student table
 		Student::where(['name' => $studentName])
 		  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);
 		
-		//print_r($jaySonObj);
 		$jsonString = json_encode($jaySonObj);
 		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$gradeLevel."_".$courseName))).".txt";
-		//echo $fileName;
-		//if(file_exists($filePath)) {
-		//	unlink($filePath);
-		// }
+	
 		 
 		$result = Storage::put($fileName, $jsonString);
-		//echo $result;
-		//echo $jsonString;
 		return view('courseViewer'); 
 		
 	}
