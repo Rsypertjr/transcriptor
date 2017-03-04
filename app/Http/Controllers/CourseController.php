@@ -25,33 +25,116 @@ class CourseController extends Controller
 		$fileContent = file_get_contents($filePath);
 		$content = json_decode($fileContent);
 		
-		echo json_encode(array('course1'=>$content->course1,'course2'=>$content->course2,
-							'course3'=>$content->course3,'course4'=>$content->course4,
-							'course5'=>$content->course5,'course6'=>$content->course6,
-							'course7'=>$content->course7,'course8'=>$content->course8,
-							'course9'=>$content->course9,'course10'=>$content->course10));	
+		echo json_encode(array('book1'=>$content->book1,'book2'=>$content->book2,
+							'book3'=>$content->book3,'book4'=>$content->book4,
+							'book5'=>$content->book5,'book6'=>$content->book6,
+							'book7'=>$content->book7,'book8'=>$content->book8,
+							'book9'=>$content->book9,'book10'=>$content->book10));	
 	}
 	
 	
 	public function storeJSON(Request $request){	
-	
 		$jaySonObj = json_decode($request->input('jaySonObj'),true);
-		$studentName = $jaySonObj['course1']['studentName'];
-		$grade = $jaySonObj['course1']['gradeLevel'];
-		$course = $jaySonObj['course1']['courseName'];
+		$studentName = $jaySonObj['book1']['studentName'];
+		$gradeLevel = $jaySonObj['book1']['gradeLevel'];
+		$courseName = $jaySonObj['book1']['courseName'];
+		$selfTest1 = $jaySonObj['book1']['selfTest1'];
+		
+		//Update Database
+		$bookScore = array();
+		$numBooks = 0;
+		$bookScoreSum = 0;
+		$bookCount = count($jaySonObj);
+		
+		//Check if Student and Course exists
+		$checkStudent = Student::firstOrCreate(['name' =>  $studentName])->get()->toArray();
+		if(count($checkStudent) <= 0)
+			{
+				$Student = new Student;
+				$Student->id = 1;
+				$Student->name = $studentName;
+				$Student->save();
+			}
+		else
+			$studentId = $checkStudent[0]['id'];
+		
+		$checkCourse = Course::where(['gradelevel' => $gradeLevel,
+									  'courseName' => $courseName,
+									  'studentName' => $studentName])
+							  ->get();
+		if(count($checkCourse) <= 0)
+		 {
+			$Course = new Course;
+			$Course->courseName = $courseName;
+			$Course->studentName = $studentName;
+			$Course->gradeLevel = $gradeLevel;
+			$Course->student_id = $studentId;
+			$Course->save();	
+		 }
+		
+		for($i = 1;$i<=$bookCount;$i++){
+			$selfTestSum = 0;
+			$numSelfTest = 0;
+			
+			for($j=1;$j<=5;$j++){
+				if( $jaySonObj['book'.$i]['selfTest'.$j] > 0){
+					$numSelfTest++;
+					$selfTestSum += $jaySonObj['book'.$i]['selfTest'.$j];					
+				}				
+			}
+			$selfTest1 = $jaySonObj['book'.$i]['selfTest1'];
+			$selfTest2 = $jaySonObj['book'.$i]['selfTest2'];
+			$selfTest3 = $jaySonObj['book'.$i]['selfTest3'];
+			$selfTest4 = $jaySonObj['book'.$i]['selfTest4'];
+			$selfTest5 = $jaySonObj['book'.$i]['selfTest5'];
+			$finalTestScore = $jaySonObj['book'.$i]['finalTest'];
+			if($selfTestSum > 0){
+			$bookScore[$i] = floatval($finalTestScore)*0.50 + (floatval($selfTestSum)/floatval($numSelfTest))*0.50;
+			//echo $bookScore[$i];
+			$numBooks++;
+			$bookScoreSum += $bookScore[$i];
+			Course::where(['gradelevel' => $gradeLevel,
+						   'courseName' => $courseName,
+					       'studentName' => $studentName])
+				  ->update(['book'.$i.'score' => $bookScore[$i]]);
+			}
+			$finalScore = $bookScoreSum/$numBooks;
+			Course::where(['gradelevel' => $gradeLevel,
+						   'courseName' => $courseName,
+					       'studentName' => $studentName])
+				  ->update(['finalScore' => $finalScore]);
+		}
+		// Update Student Record with Overall Grade Score
+		$coursesPerGrade = Course::where(['studentName' => $studentName,
+		                                   'gradeLevel' => $gradeLevel] )
+								  ->get();
+								  					  
+		$gradeScores = array();	
+		$ends = array('first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth');	
+        $sumGradeScore = 0;		
+		$gradeScores[$gradeLevel] = $ends[$gradeLevel-1].'GradeScore';
+			
+		foreach($coursesPerGrade as $course){
+			//echo $gradeScores[$gradeLevel];
+			$sumGradeScore += $course->finalScore;
+			//echo $sumGradeScore;	
+		}					  
+	    //Calculate Grade Scores over all courses and put in Student table
+		Student::where(['name' => $studentName])
+		  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);
 		
 		//print_r($jaySonObj);
 		$jsonString = json_encode($jaySonObj);
-		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$grade."_".$course))).".txt";
-		echo $fileName;
+		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$gradeLevel."_".$courseName))).".txt";
+		//echo $fileName;
 		//if(file_exists($filePath)) {
 		//	unlink($filePath);
 		// }
 		 
 		$result = Storage::put($fileName, $jsonString);
-		echo $result;
-		echo $jsonString;
-		return view('courseViewer');
+		//echo $result;
+		//echo $jsonString;
+		return view('courseViewer'); 
 		
 	}
 	 
@@ -118,50 +201,50 @@ class CourseController extends Controller
 			 //$testScoresArr = explode(",",$testScores[$i][0]);
 			 switch($i){
 				 case 1:
-				 $course = $testScores["course1"];
+				 $book = $testScores["book1"];
 				 break;
 				 case 2:
-				 $course = $testScores["course2"];
+				 $book = $testScores["book2"];
 				 break;
 				 case 3:
-				 $course = $testScores["course3"];
+				 $book = $testScores["book3"];
 				 break; 
 				 case 4:
-				 $course = $testScores["course4"];
+				 $book = $testScores["book4"];
 				 break; 
 				 case 5:
-				 $course = $testScores["course5"];
+				 $book = $testScores["book5"];
 				 break; 
 				 case 6:
-				 $course = $testScores["course6"];
+				 $book = $testScores["book6"];
 				 break;
 				 case 7:
-				 $course = $testScores["course7"];
+				 $book = $testScores["book7"];
 				 break;
 				 case 8:
-				 $course = $testScores["course8"];
+				 $book = $testScores["book8"];
 				 break; 
 				 case 9:
-				 $course = $testScores["course9"];
+				 $book = $testScores["book9"];
 				 break; 
 				 case 10:
-				 $course = $testScores["course10"];
+				 $book = $testScores["book10"];
 				 break; 
 				 default:
 				 ;
 			 }
 			 
-			 $studentNames[$i] = $course["studentName"];
+			 $studentNames[$i] = $book["studentName"];
 			 $studentName = $studentNames[$i];
-			 $gradeLevels[$i] = $course["gradeLevel"];
+			 $gradeLevels[$i] = $book["gradeLevel"];
 			 $gradeLevel = $gradeLevels[$i];
-			 $courseNames[$i] = $course["courseName"];
-			 $selfTests1[$i] = $course["selfTest1"];
-			 $selfTests2[$i] = $course["selfTest2"];
-			 $selfTests3[$i] = $course["selfTest3"];
-			 $selfTests4[$i] = $course["selfTest4"];
-			 $selfTests5[$i] = $course["selfTest5"];
-			 $finalTests[$i] = $course["finalTest"];
+			 $courseNames[$i] = $book["courseName"];
+			 $selfTests1[$i] = $book["selfTest1"];
+			 $selfTests2[$i] = $book["selfTest2"];
+			 $selfTests3[$i] = $book["selfTest3"];
+			 $selfTests4[$i] = $book["selfTest4"];
+			 $selfTests5[$i] = $book["selfTest5"];
+			 $finalTests[$i] = $book["finalTest"];
 			 
 			
 			 
@@ -245,9 +328,10 @@ class CourseController extends Controller
 								 ->update([$whichBook => $bookScore[$i],
 								           'finalScore' => $finalScore]);
 			
-		 } 		 
+		 } 		
+		 
         //Begin to Calculate Grade Scores over all courses and put in Student table
-		 $coursesPerGrade = Course::where(['studentName' => $studentName,
+		$coursesPerGrade = Course::where(['studentName' => $studentName,
 		                                   'gradeLevel' => $gradeLevel] )
 								  ->get();
 								  					  
@@ -257,20 +341,15 @@ class CourseController extends Controller
 		$gradeScores[$gradeLevel] = $ends[$gradeLevel-1].'GradeScore';
 			
 		foreach($coursesPerGrade as $course){
-			
-			
 			//echo $gradeScores[$gradeLevel];
 			$sumGradeScore += $course->finalScore;
-			//echo $sumGradeScore;			
+			//echo $sumGradeScore;	
 		}					  
-		//Calculate Grade Scores over all courses and put in Student table
-        Student::where(['name' => $studentName])
-			  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);
+	    //Calculate Grade Scores over all courses and put in Student table
+		Student::where(['name' => $studentName])
+		  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);
 
-
-
-		
-		 return view('courseViewer');
+		return view('courseViewer');
 	 }
 	 
 	 public function reportCard(Request $request){

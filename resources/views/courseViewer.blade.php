@@ -29,8 +29,8 @@
 			//var testNo = 1;
 			
 			
-			var courseScores = {course1:"",course2:"",course3:"",course4:"",course5:"",course6:"",
-								course7:"",course8:"",course9:"",course10:""};
+			var courseScores = {book1:"",book2:"",book3:"",book4:"",book5:"",book6:"",
+								book7:"",book8:"",book9:"",book10:""};
 			var courses = [];					
 			jQuery(document).ready(function() {
 			        $('#bkScore').css('display','block').text("Calculate Book "+noBooks.toString()+" Score");
@@ -127,49 +127,49 @@
 						$('#gradeLevel').prop('disabled',true);
 						$('#courseName').prop('disabled',true);
 						
-						var courseScore = {studentName:"",gradeLevel:"",courseName:"",
+						var bookScore = {studentName:"",gradeLevel:"",courseName:"",
 								selfTest1:0,selfTest2:0,selfTest3:0,selfTest4:0,selfTest5:0,finalTest:0};
 								
-						courseScore.studentName = $('#studentName').val();
-						courseScore.gradeLevel = $('#gradeLevel').val();
-						courseScore.courseName = $('#courseName').val();
-						courseScore.selfTest1 = $('#selfTest1').val();
-						courseScore.selfTest2 = $('#selfTest2').val();
-						courseScore.selfTest3 = $('#selfTest3').val();
-						courseScore.selfTest4 = $('#selfTest4').val();
-						courseScore.selfTest5 = $('#selfTest5').val();
-						courseScore.finalTest = $('#finalTest').val(); 
+						bookScore.studentName = $('#studentName').val();
+						bookScore.gradeLevel = $('#gradeLevel').val();
+						bookScore.courseName = $('#courseName').val();
+						bookScore.selfTest1 = $('#selfTest1').val();
+						bookScore.selfTest2 = $('#selfTest2').val();
+						bookScore.selfTest3 = $('#selfTest3').val();
+						bookScore.selfTest4 = $('#selfTest4').val();
+						bookScore.selfTest5 = $('#selfTest5').val();
+						bookScore.finalTest = $('#finalTest').val(); 
 												
 						switch(noBooks)	{
 							case 1:
-								courseScores.course1 = courseScore;
+								courseScores.book1 = bookScore;
 								break;
 							case 2:
-							    courseScores.course2  = courseScore;
+							    courseScores.book2  = bookScore;
 								break;
 							case 3:
-								courseScores.course3  = courseScore;
+								courseScores.book3  = bookScore;
 								break;
 							case 4:
-								courseScores.course4  = courseScore;
+								courseScores.book4  = bookScore;
 								break;
 							case 5:
-							    courseScores.course5  = courseScore;
+							    courseScores.book5  = bookScore;
 								break;
 							case 6:
-								courseScores.course6  = courseScore;
+								courseScores.book6  = bookScore;
 								break;
 							case 7:
-								courseScores.course7  = courseScore;
+								courseScores.book7  = bookScore;
 								break;
 							case 8:
-								courseScores.course8  = courseScore;
+								courseScores.book8  = bookScore;
 								break;
 							case 9:	
-								courseScores.course9  = courseScore;
+								courseScores.book9  = bookScore;
 								break;
 							case 10:
-								courseScores.course10  = courseScore;
+								courseScores.book10  = bookScore;
 								break;
 							default:
 								;
@@ -179,7 +179,6 @@
 						
 						noSelfTests++;
 						json = JSON.stringify(courseScores);
-						alert(json);
 						
                         // Reset inputs						
 						$('#selfTest1').val(0);
@@ -205,7 +204,7 @@
 							$('#bookSubmit').css('display','none');	
 						    //$('#courseForm').submit();
 							
-							$.post( "/course", {"testScores":json});
+							//$.post( "/course", {"testScores":json});
 							
 							
 						}
@@ -238,8 +237,8 @@
 				//alert(studentAttr);	
 				var testNo = 1;					
 				$.post("/getStudent",{"studentAttr":studentAttr},function(data){
-										
-					console.log(data.course1.studentName);
+							
+					console.log(data.book1.studentName);
 					// Select Course for Self Test editing
 					doCourses(data,testNo);
 					
@@ -248,38 +247,40 @@
 			});	
 		
 		  function doCourses(data,testNo){				  
-				var course = '';
+				var book = '';
 					if(testNo <= 10){
 							switch(testNo){
 								case 1:
-									course = data.course1;
+									book = data.book1;
 									break;
 								case 2:
-									course = data.course2;
+									book = data.book2;
 									break;
 								case 3:
-									course = data.course3;
+									book = data.book3;
 									break;
 								case 4:
-									course = data.course4;
+									book = data.book4;
 									break;
 								case 5:
-									course = data.course5;
+									book = data.book5;
 									break;
 								case 6:
-									course = data.course6;
+									book = data.book6;
 									break;
 								case 7:
-									course = data.course7;
+								    book = data.book7;
+									book = data.book7;
+									book = data.course7;
 									break;
 								case 8:
-									course = data.course8;
+									book = data.book8;
 									break;
 								case 9:
-									course = data.course9;
+									book = data.book9;
 									break;
 								case 10:
-									course = data.course10;
+									book = data.book10;
 									break;
 								default:
 								;
@@ -288,141 +289,141 @@
 							$('#bkScore, #reportCard, #editRecord, #checkRecord').css('display','none');
 							$('#stScores').css('display','block')
 								  .append('<button type="button" id="editJSON" class="btn btn-default">Save Edit</button>');
-							$('#selfTest1').val(course.selfTest1);
-							$('#selfTest2').val(course.selfTest2);
-							$('#selfTest3').val(course.selfTest3);
-							$('#selfTest4').val(course.selfTest4);
-							$('#selfTest5').val(course.selfTest5);
-							$('#finalTest').val(course.finalTest);								
+							$('#selfTest1').val(book.selfTest1);
+							$('#selfTest2').val(book.selfTest2);
+							$('#selfTest3').val(book.selfTest3);
+							$('#selfTest4').val(book.selfTest4);
+							$('#selfTest5').val(book.selfTest5);
+							$('#finalTest').val(book.finalTest);								
 							
 							$('#editJSON').on('mousedown',{testNo:testNo},function(event){  //Choose to Edit								
 									if(testNo < 11){
 										//alert(event.data.testNo);
 										switch(testNo){  //Input edited value
 										case 1:
-											if(!(data.course1.studentName))
-												data.course1 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course1.selfTest1 = $('#selfTest1').val();
-											data.course1.selfTest2 = $('#selfTest2').val();
-											data.course1.selfTest3 = $('#selfTest3').val();
-											data.course1.selfTest4 = $('#selfTest4').val();
-											data.course1.selfTest5 = $('#selfTest5').val();
-											data.course1.finalTest = $('#finalTest').val();
-											course = data.course1;
+											if(!(data.book1.studentName))
+												data.book1 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book1.selfTest1 = $('#selfTest1').val();
+											data.book1.selfTest2 = $('#selfTest2').val();
+											data.book1.selfTest3 = $('#selfTest3').val();
+											data.book1.selfTest4 = $('#selfTest4').val();
+											data.book1.selfTest5 = $('#selfTest5').val();
+											data.book1.finalTest = $('#finalTest').val();
+											book = data.book1;
 											break;
 										case 2:
-											if(!(data.course2.studentName))
-												data.course2 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course2.selfTest1 = $('#selfTest1').val();
-											data.course2.selfTest2 = $('#selfTest2').val();
-											data.course2.selfTest3 = $('#selfTest3').val();
-											data.course2.selfTest4 = $('#selfTest4').val();
-											data.course2.selfTest5 = $('#selfTest5').val();
-											data.course2.finalTest = $('#finalTest').val();
-											course = data.course2;
+											if(!(data.book2.studentName))
+												data.book2 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book2.selfTest1 = $('#selfTest1').val();
+											data.book2.selfTest2 = $('#selfTest2').val();
+											data.book2.selfTest3 = $('#selfTest3').val();
+											data.book2.selfTest4 = $('#selfTest4').val();
+											data.book2.selfTest5 = $('#selfTest5').val();
+											data.book2.finalTest = $('#finalTest').val();
+											book = data.book2;
 											break;
 										case 3:
-											if(!(data.course3.studentName))
-												data.course3 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course3.selfTest1 = $('#selfTest1').val();
-											data.course3.selfTest2 = $('#selfTest2').val();
-											data.course3.selfTest3 = $('#selfTest3').val();
-											data.course3.selfTest4 = $('#selfTest4').val();
-											data.course3.selfTest5 = $('#selfTest5').val();
-											data.course3.finalTest = $('#finalTest').val();
-											course = data.course3;
+											if(!(data.book3.studentName))
+												data.book3 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book3.selfTest1 = $('#selfTest1').val();
+											data.book3.selfTest2 = $('#selfTest2').val();
+											data.book3.selfTest3 = $('#selfTest3').val();
+											data.book3.selfTest4 = $('#selfTest4').val();
+											data.book3.selfTest5 = $('#selfTest5').val();
+											data.book3.finalTest = $('#finalTest').val();
+											book = data.book3;
 											break;
 										case 4:
-											if(!(data.course4.studentName))
-												data.course4 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course4.selfTest1 = $('#selfTest1').val();
-											data.course4.selfTest2 = $('#selfTest2').val();
-											data.course4.selfTest3 = $('#selfTest3').val();
-											data.course4.selfTest4 = $('#selfTest4').val();
-											data.course4.selfTest5 = $('#selfTest5').val();
-											data.course4.finalTest = $('#finalTest').val();
-											course = data.course4;
+											if(!(data.book4.studentName))
+												data.book4 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book4.selfTest1 = $('#selfTest1').val();
+											data.book4.selfTest2 = $('#selfTest2').val();
+											data.book4.selfTest3 = $('#selfTest3').val();
+											data.book4.selfTest4 = $('#selfTest4').val();
+											data.book4.selfTest5 = $('#selfTest5').val();
+											data.book4.finalTest = $('#finalTest').val();
+											book = data.book4;
 											break;
 										case 5:
-											if(!(data.course5.studentName))
-												data.course5 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course5.selfTest1 = $('#selfTest1').val();
-											data.course5.selfTest2 = $('#selfTest2').val();
-											data.course5.selfTest3 = $('#selfTest3').val();
-											data.course5.selfTest4 = $('#selfTest4').val();
-											data.course5.selfTest5 = $('#selfTest5').val();
-											data.course5.finalTest = $('#finalTest').val();
-											course = data.course5;
+											if(!(data.book5.studentName))
+												data.book5 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book5.selfTest1 = $('#selfTest1').val();
+											data.book5.selfTest2 = $('#selfTest2').val();
+											data.book5.selfTest3 = $('#selfTest3').val();
+											data.book5.selfTest4 = $('#selfTest4').val();
+											data.book5.selfTest5 = $('#selfTest5').val();
+											data.book5.finalTest = $('#finalTest').val();
+											book = data.book5;
 											break;
 										case 6:
-											if(!(data.course6.studentName))
-												data.course6 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course6.selfTest1 = $('#selfTest1').val();
-											data.course6.selfTest2 = $('#selfTest2').val();
-											data.course6.selfTest3 = $('#selfTest3').val();
-											data.course6.selfTest4 = $('#selfTest4').val();
-											data.course6.selfTest5 = $('#selfTest5').val();
-											data.course6.finalTest = $('#finalTest').val();
-											course = data.course6;
+											if(!(data.book6.studentName))
+												data.book6 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book6.selfTest1 = $('#selfTest1').val();
+											data.book6.selfTest2 = $('#selfTest2').val();
+											data.book6.selfTest3 = $('#selfTest3').val();
+											data.book6.selfTest4 = $('#selfTest4').val();
+											data.book6.selfTest5 = $('#selfTest5').val();
+											data.book6.finalTest = $('#finalTest').val();
+											book = data.book6;
 											break;
 										case 7:
-											if(!(data.course7.studentName))
-												data.course7 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course7.selfTest1 = $('#selfTest1').val();
-											data.course7.selfTest2 = $('#selfTest2').val();
-											data.course7.selfTest3 = $('#selfTest3').val();
-											data.course7.selfTest4 = $('#selfTest4').val();
-											data.course7.selfTest5 = $('#selfTest5').val();
-											data.course7.finalTest = $('#finalTest').val();
-											course = data.course7;
+											if(!(data.book7.studentName))
+												data.book7 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book7.selfTest1 = $('#selfTest1').val();
+											data.book7.selfTest2 = $('#selfTest2').val();
+											data.book7.selfTest3 = $('#selfTest3').val();
+											data.book7.selfTest4 = $('#selfTest4').val();
+											data.book7.selfTest5 = $('#selfTest5').val();
+											data.book7.finalTest = $('#finalTest').val();
+											book = data.book7;
 											break;
 										case 8:
-											if(!(data.course8.studentName))
-												data.course8 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course8.selfTest1 = $('#selfTest1').val();
-											data.course8.selfTest2 = $('#selfTest2').val();
-											data.course8.selfTest3 = $('#selfTest3').val();
-											data.course8.selfTest4 = $('#selfTest4').val();
-											data.course8.selfTest5 = $('#selfTest5').val();
-											data.course8.finalTest = $('#finalTest').val();
-											course = data.course8;
+											if(!(data.book8.studentName))
+												data.book8 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book8.selfTest1 = $('#selfTest1').val();
+											data.book8.selfTest2 = $('#selfTest2').val();
+											data.book8.selfTest3 = $('#selfTest3').val();
+											data.book8.selfTest4 = $('#selfTest4').val();
+											data.book8.selfTest5 = $('#selfTest5').val();
+											data.book8.finalTest = $('#finalTest').val();
+											book = data.book8;
 											break;
 										case 9:
-											if(!(data.course9.studentName))
-												data.course9 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course9.selfTest1 = $('#selfTest1').val();
-											data.course9.selfTest2 = $('#selfTest2').val();
-											data.course9.selfTest3 = $('#selfTest3').val();
-											data.course9.selfTest4 = $('#selfTest4').val();
-											data.course9.selfTest5 = $('#selfTest5').val();
-											data.course9.finalTest = $('#finalTest').val();
-											course = data.course9;
+											if(!(data.book9.studentName))
+												data.book9 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book9.selfTest1 = $('#selfTest1').val();
+											data.book9.selfTest2 = $('#selfTest2').val();
+											data.book9.selfTest3 = $('#selfTest3').val();
+											data.book9.selfTest4 = $('#selfTest4').val();
+											data.book9.selfTest5 = $('#selfTest5').val();
+											data.book9.finalTest = $('#finalTest').val();
+											book = data.book9;
 											break;
 										case 10:
-											if(!(data.course10.studentName))
-												data.course10 = $.parseJSON('{"studentName":"","gradeLevel":"","courseName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
-											data.course10.selfTest1 = $('#selfTest1').val();
-											data.course10.selfTest2 = $('#selfTest2').val();
-											data.course10.selfTest3 = $('#selfTest3').val();
-											data.course10.selfTest4 = $('#selfTest4').val();
-											data.course10.selfTest5 = $('#selfTest5').val();
-											data.course10.finalTest = $('#finalTest').val();
-											course = data.course10;
+											if(!(data.book10.studentName))
+												data.book10 = $.parseJSON('{"studentName":"","gradeLevel":"","bookName":"","selfTest1":"","selfTest2":"","selfTest3":"","selfTest4":"","selfTest5":"","finalTest":""}');
+											data.book10.selfTest1 = $('#selfTest1').val();
+											data.book10.selfTest2 = $('#selfTest2').val();
+											data.book10.selfTest3 = $('#selfTest3').val();
+											data.book10.selfTest4 = $('#selfTest4').val();
+											data.book10.selfTest5 = $('#selfTest5').val();
+											data.book10.finalTest = $('#finalTest').val();
+											book = data.book10;
 											break;
 										default:
 										;
 									}
 
 									// Store values of last edited book
-									course.studentName = $('#studentName').val();
-									course.gradeLevel = $('#gradeLevel').val();
-									course.courseName = $('#courseName').val();
-									course.selfTest1 = $('#selfTest1').val();
-									course.selfTest2 = $('#selfTest2').val();
-									course.selfTest3 = $('#selfTest3').val();
-									course.selfTest4 = $('#selfTest4').val();
-									course.selfTest5 = $('#selfTest5').val();
-									course.finalTest = $('#finalTest').val();
+									book.studentName = $('#studentName').val();
+									book.gradeLevel = $('#gradeLevel').val();
+									book.bookName = $('#courseName').val();
+									book.selfTest1 = $('#selfTest1').val();
+									book.selfTest2 = $('#selfTest2').val();
+									book.selfTest3 = $('#selfTest3').val();
+									book.selfTest4 = $('#selfTest4').val();
+									book.selfTest5 = $('#selfTest5').val();
+									book.finalTest = $('#finalTest').val();
 									
 									// Prepare to get Prefill edit values for next book of course
 									++testNo;  //Get next book in switch statement
@@ -431,45 +432,45 @@
 							
 										switch(testNo){  //Used for pre-loading
 											case 1:
-												course = data.course1;
+												book = data.book1;
 												break;
 											case 2:
-												course = data.course2;
+												book = data.book2;
 												break;
 											case 3:
-												course = data.course3;
+												book = data.book3;
 												break;
 											case 4:
-												course = data.course4;
+												book = data.book4;
 												break;
 											case 5:
-												course = data.course5;
+												book = data.book5;
 												break;
 											case 6:
-												course = data.course6;
+												book = data.book6;
 												break;
 											case 7:
-												course = data.course7;
+												book = data.book7;
 												break;
 											case 8:
-												course = data.course8;
+												book = data.book8;
 												break;
 											case 9:
-												course = data.course9;
+												book = data.book9;
 												break;
 											case 10:
-												course = data.course10;
+												book = data.book10;
 												break;
 											default:
 											;
 										}
 										//Preload next book value
-										$('#selfTest1').val(course.selfTest1);
-										$('#selfTest2').val(course.selfTest2);
-										$('#selfTest3').val(course.selfTest3);
-										$('#selfTest4').val(course.selfTest4);
-										$('#selfTest5').val(course.selfTest5);
-										$('#finalTest').val(course.finalTest);
+										$('#selfTest1').val(book.selfTest1);
+										$('#selfTest2').val(book.selfTest2);
+										$('#selfTest3').val(book.selfTest3);
+										$('#selfTest4').val(book.selfTest4);
+										$('#selfTest5').val(book.selfTest5);
+										$('#finalTest').val(book.finalTest);
 									}
 									
 									if(testNo == 11){  //After last book
@@ -481,7 +482,8 @@
 										$('#gradeLevel').val('');
 										$('#courseName').val('');
 										console.log(data);
-										json = JSON.stringify(data);										
+										json = JSON.stringify(data);	
+                                        alert(json);										
 										$.post( "/storeJSF", {"jaySonObj":json},"json");
 										location.reload(); //refresh variables
 									}
