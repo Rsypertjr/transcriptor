@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use App\Product;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,6 +38,10 @@ Route::post('/checkStudent','CourseController@checkStudent');
 
 Route::post('/getStudent','CourseController@getStudent');
 
+Route::post('/renewDatabase', 'CourseController@renewDatabase');
+
+Route::post('/clearDatabase', 'CourseController@clearDatabase');
+
 
 
 
@@ -47,6 +52,49 @@ Route::get('/', function () {
 	return view('productSubmit',compact('products'),['edit' => $edit]);	
 	//return view('welcome');
 });
+
+Route::get('/bootstrap', function () {
+	
+	return view('learnBootStrap');
+});
+
+Route::get('/bootstrap2', function () {
+	
+	return view('learnBootStrap2');
+});
+
+
+Route::get('/scrollSpy', function () {
+	
+	return view('scrollSpy');
+});
+
+Route::get('/scrollSpyVert', function () {
+	
+	return view('scrollSpyVert');
+});
+
+Route::get('/affixEx', function () {
+	
+	return view('affixEx');
+});
+
+Route::get('/company', function () {
+	
+	return view('companyTheme');
+});
+
+Route::get('/angularJS', function () {
+	
+	return view('angularJSEx');
+});
+
+
+Route::get('/affixVertEx', function () {
+	
+	return view('affixVertEx');
+});
+
 
 
 Route::post('/submit', function(Request $request){

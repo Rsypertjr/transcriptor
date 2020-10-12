@@ -27,10 +27,9 @@
 			var noBooks = 1;	
 			var json = '';
 			//var testNo = 1;
-			
-			
 			var courseScores = {book1:"",book2:"",book3:"",book4:"",book5:"",book6:"",
-								book7:"",book8:"",book9:"",book10:""};
+								book7:"",book8:"",book9:"",book10:""};  
+			
 			var courses = [];					
 			jQuery(document).ready(function() {
 			        $('#bkScore').css('display','block').text("Calculate Book "+noBooks.toString()+" Score");
@@ -46,6 +45,12 @@
 												   
 								studentAttr = JSON.stringify(studentAttr);
 								//alert(studentAttr);
+
+								  $.ajaxSetup({
+										headers: {
+											'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+										}
+									});
 								$.post( "/checkStudent", {"studentAttr":studentAttr},function(data){
 									 if(data.isDbRecord){
 										$('#editRecord').text('Edit Record').css('display','block');
@@ -91,7 +96,14 @@
 												   
 								studentAttr = JSON.stringify(studentAttr);
 								//alert(studentAttr);
+
+								$.ajaxSetup({
+										headers: {
+											'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+										}
+									});
 								$.post( "/checkStudent", {"studentAttr":studentAttr},function(data){
+									alert(JSON.stringify(data));
 									 if(data.isDbRecord){
 										$('#bkScore, #reportCard').css('display','none');
 										$('#editRecord').text('Edit Record').css('display','block');
@@ -118,17 +130,28 @@
 						  
 					});
 					
-					
+					/// Event and Function for Book Submit
 					$('#bookSubmit').on('mousedown',function(){			
                         
-                       	//Get test values		
+						doBookSubmit(null,null);
+						
+					});
+
+
+				      function doBookSubmit(rebuild = null,bkCount=null){						
+					
+
+						if(rebuild == 'yes')
+							noBooks = bkCount;
+
+						 	//Get test values		
 						$('#bookSubmit').css('display','block');
 						$('#studentName').prop('disabled',true);
 						$('#gradeLevel').prop('disabled',true);
 						$('#courseName').prop('disabled',true);
 						
 						var bookScore = {studentName:"",gradeLevel:"",courseName:"",
-								selfTest1:0,selfTest2:0,selfTest3:0,selfTest4:0,selfTest5:0,finalTest:0};
+								selfTest1:0,selfTest2:0,selfTest3:0,selfTest4:0,selfTest5:0,finalTest:0,rebuild:''};
 								
 						bookScore.studentName = $('#studentName').val();
 						bookScore.gradeLevel = $('#gradeLevel').val();
@@ -139,6 +162,10 @@
 						bookScore.selfTest4 = $('#selfTest4').val();
 						bookScore.selfTest5 = $('#selfTest5').val();
 						bookScore.finalTest = $('#finalTest').val(); 
+						if(rebuild != null)
+							bookScore.rebuild = rebuild;
+						else
+							bookScore.rebuild = null;
 												
 						switch(noBooks)	{
 							case 1:
@@ -187,7 +214,20 @@
 						$('#selfTest4').val(0);
 						$('#selfTest5').val(0);
 						$('#finalTest').val(0);  
-						++noBooks;  // count # of books
+
+						if(rebuild == 'yes')
+							noBooks = bkCount;
+						else
+							++noBooks;  // count # of books
+
+
+						$.ajaxSetup({
+								headers: {
+									'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								}
+							});
+
+						console.log(json);
 						$.post( "/storeJSF", {"jaySonObj":json});
 						
 						if(noBooks == 11){  // 10 books per subject
@@ -213,8 +253,8 @@
 							$('#stLabel').text('Input Self Tests Scores Below for Book '+noBooks.toString());						
 							$('#bkScore').css('display','none');
 						}
-						
-					});
+						return;
+					}
 				
 					$('#reportCard').on('mousedown',function(){
 						var val = $('#studentName').val();
@@ -235,7 +275,12 @@
 											   
 				studentAttr = JSON.stringify(studentAttr);
 				//alert(studentAttr);	
-				var testNo = 1;					
+				var testNo = 1;			
+				$.ajaxSetup({
+								headers: {
+									'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								}
+							});		
 				$.post("/getStudent",{"studentAttr":studentAttr},function(data){
 							
 					console.log(data.book1.studentName);
@@ -245,6 +290,59 @@
 				},"json");
 				
 			});	
+
+           // Clear and Recreate Database from Json Text files
+			$('#renewDatabase').on('mousedown', function(){
+				
+				$.ajaxSetup({
+								headers: {
+									'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								}
+							});
+				$.post("/renewDatabase",function(data){
+		
+					var courseScorez = JSON.parse(JSON.stringify(data));	
+					courseScorez = courseScorez.courseScores;				
+
+					$.post( "/clearDatabase");  // Remove databases rows
+
+				    console.log(courseScorez);
+                    if(courseScorez.length > 0){
+						courseScorez.forEach(function(course){
+								var result = Object.keys(course).map(function (key,index) { 							
+										return [index, course[key]]; 
+									}); 
+								course = result;
+
+							
+
+								course.forEach(function(book){
+									//alert(JSON.stringify(book[0]));
+
+									
+									$('#studentName').val(book[1].studentName.replace('.',''));
+									$('#courseName').val(book[1].courseName);
+									$('#gradeLevel').val(book[1].gradeLevel);
+									$('#selfTest1').val(book[1].selfTest1);
+									$('#selfTest2').val(book[1].selfTest2);
+									$('#selfTest3').val(book[1].selfTest3);
+									$('#selfTest4').val(book[1].selfTest4);
+									$('#selfTest5').val(book[1].selfTest5);
+								    $('#finalTest').val(book[1].finalTest);
+
+									doBookSubmit('yes',parseInt(book[0])+1);
+									
+									
+								});
+						});
+						
+					}
+					//alert(JSON.stringify(data));					
+				},"json");
+				
+			});	
+
+
 		
 		  function doCourses(data,testNo){				  
 				var book = '';
@@ -483,8 +581,14 @@
 										$('#courseName').val('');
 										console.log(data);
 										json = JSON.stringify(data);	
-                                        alert(json);										
-										$.post( "/storeJSF", {"jaySonObj":json},"json");
+                                       // alert(json);			
+
+									   	$.ajaxSetup({
+												headers: {
+													'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+												}
+											});						
+												$.post( "/storeJSF", {"jaySonObj":json},"json");
 										location.reload(); //refresh variables
 									}
 
@@ -530,31 +634,38 @@
 				width:auto;
 				margin-right:2em;
 			}
+
+			#renewDatabase {
+				position:relative;
+				float:right;
+			}
 			
 		</style>
 		
       
     </head>
     <body>      
-
-		<h2 style="position:relative;width:auto;margin-left:25%">Home School Transcript Generator</h2>
+		<div class="container">
+			<h2 style="position:relative;width:auto;margin-left:25%">Home School Transcript Generator</h2>
+			<button  type="button" id="renewDatabase" class="btn btn-default">Renew Database Record</button>
+		</div>
 	   
         <div class="content">
 				    
 					<div id="courseContainer" class="container">
 						<form id="courseForm" action="/course" method="post">
 							{!! csrf_field() !!}
-							<h2 id="newStudentHdr">Input New Student and Course</h2>
+							<h2  id="newStudentHdr">Input New Student and Course</h2> 
 							<div class="form-group">
-								<label for="title">Student Name</label>
+								<label for="studentName">Student Name</label>
 								<input type="text" class="form-control courseInput" id="studentName" name="studentName" placeholder="Name">
 							</div>
 							<div class="form-group">
-								<label for="title">Grade</label>
+								<label for="gradeLevel">Grade</label>
 								<input type="number" step="any" class="form-control courseInput" id="gradeLevel" name="gradeLevel" placeholder="Grade">
 							</div>
 							<div class="form-group">
-								<label for="title">Course Name</label>
+								<label for="courseName">Course Name</label>
 								<input type="text" class="form-control courseInput" id="courseName" name="courseName" placeholder="Name of Course">
 							</div>
 							<div class="form-group">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use App\Course;
 use App\Student;
 use App\GradeLevel;
@@ -32,14 +33,24 @@ class CourseController extends Controller
 							'book9'=>$content->book9,'book10'=>$content->book10));	
 	}
 	
+	public function clearDatabase(Request $request){
+		Student::truncate();
+		Course::truncate();
+	}
 	
 	public function storeJSON(Request $request){	
 		$jaySonObj = json_decode($request->input('jaySonObj'),true);
+		$jaySonObj = (array)$jaySonObj;
 		$studentName = $jaySonObj['book1']['studentName'];
 		$gradeLevel = $jaySonObj['book1']['gradeLevel'];
 		$courseName = $jaySonObj['book1']['courseName'];
-		$selfTest1 = $jaySonObj['book1']['selfTest1'];
-		
+		$rebuild = $jaySonObj['book1']['rebuild'];
+		$student_id = 0;
+		$course_id = 0;
+		$created_at = 0;
+	
+
+
 		//Update Database
 		$bookScore = array();
 		$numBooks = 0;
@@ -51,15 +62,22 @@ class CourseController extends Controller
 		if(count($checkStudent) <= 0)
 			{
 				$Student = new Student;
-				$Student->id = 1;
 				$Student->name = $studentName;
 				$Student->save();
+				$student_id= $Student->id;
+
 			}
-		else
-			$studentId = $checkStudent[0]['id'];
+		else {
+			$check_Student = Student::where([
+				'name' => $studentName
+			])->get();
+			$student_id = $check_Student[0]['id'];
 		
-		$checkCourse = Course::where(['gradelevel' => $gradeLevel,
+		}
+		$checkCourse = Course::where([
+									  'gradelevel' => $gradeLevel,
 									  'courseName' => $courseName,
+									  'student_id' => $student_id,
 									  'studentName' => $studentName])
 							  ->get();
 		if(count($checkCourse) <= 0)
@@ -68,40 +86,125 @@ class CourseController extends Controller
 			$Course->courseName = $courseName;
 			$Course->studentName = $studentName;
 			$Course->gradeLevel = $gradeLevel;
-			$Course->student_id = $studentId;
+			$Course->student_id = $student_id;
 			$Course->save();	
+			$course_id = $Course->id;
+			$created_at = $Course->created_at;
 		 }
+		 else{
+			 $course_id = $checkCourse[0]['id'];
+			 $created_at = $checkCourse[0]['created_at'];
+		 }
+
+	    
+		$index = 1;
+		foreach($jaySonObj as $book){
 		
-		for($i = 1;$i<=$bookCount;$i++){
-			$selfTestSum = 0;
+			$i = $index;
 			$numSelfTest = 0;
-			
-			for($j=1;$j<=5;$j++){
-				if( $jaySonObj['book'.$i]['selfTest'.$j] > 0){
+			$selfTest1 = 0;
+			$selfTest2 = 0;
+			$selfTest3 = 0;
+			$selfTest4 = 0;
+			$selfTest5 = 0;
+			$finalTestScore = 0;
+			$selfTestSum = 0;
+
+		/*	for($j=1;$j<=5;$j++){
+				$selfTest = 'selfTest' . $j;
+				if( $jaySonObj['book'.$i]->$selfTest> 0){
 					$numSelfTest++;
 					$selfTestSum += $jaySonObj['book'.$i]['selfTest'.$j];					
 				}				
 			}
+			*/
+			if(is_iterable($book) && count($book) > 0){
+				foreach($book as $key => $value){
+					
+                    print_r($book);
+					$str = $key;
+					$pattern1 = "/selfTest1/i";
+					$pattern2 = "/selfTest2/i";
+					$pattern3 = "/selfTest3/i";
+					$pattern4 = "/selfTest4/i";
+					$pattern5 = "/selfTest5/i";
+					$pattern6 = "/finalTest/i";
+
+					if(preg_match($pattern1, $str)){
+						if($value > 0)
+							$numSelfTest++;
+						$selfTest1 = intval($value);	
+						$selfTestSum += intval($value);
+					}
+					else if(preg_match($pattern2, $str)){
+						if($value > 0)
+							$numSelfTest++;
+						$selfTest2 = intval($value);	
+						$selfTestSum += intval($value);
+					} 
+					else if (preg_match($pattern3, $str)) {
+						if ($value > 0)
+							$numSelfTest++;
+						$selfTest3 = intval($value);
+						$selfTestSum += intval($value);
+					} 
+					else if (preg_match($pattern4, $str) ) {
+						if ($value > 0)
+							$numSelfTest++;
+						$selfTest4 = intval($value);
+						$selfTestSum += intval($value);
+					} 
+					else if (preg_match($pattern5, $str) ) {
+						if ($value > 0)
+							$numSelfTest++;
+						$selfTest5= intval($value);
+						$selfTestSum += intval($value);
+					} 
+					else if (preg_match($pattern6, $str)) {
+						$finalTestScore = intval($value);
+					}
+					
+				}
+			}
+			/*
 			$selfTest1 = $jaySonObj['book'.$i]['selfTest1'];
 			$selfTest2 = $jaySonObj['book'.$i]['selfTest2'];
 			$selfTest3 = $jaySonObj['book'.$i]['selfTest3'];
 			$selfTest4 = $jaySonObj['book'.$i]['selfTest4'];
 			$selfTest5 = $jaySonObj['book'.$i]['selfTest5'];
 			$finalTestScore = $jaySonObj['book'.$i]['finalTest'];
+			*/
+
+
 			if($selfTestSum > 0){
-			$bookScore[$i] = floatval($finalTestScore)*0.50 + (floatval($selfTestSum)/floatval($numSelfTest))*0.50;
-			$numBooks++;
-			$bookScoreSum += $bookScore[$i];
-			Course::where(['gradelevel' => $gradeLevel,
+
+				$bookScore[$index] = floatval($finalTestScore)*0.50 + (floatval($selfTestSum)/floatval($numSelfTest))*0.50;
+				$numBooks++;
+
+				$bookScoreSum += $bookScore[$i];
+				Course::where([
+					        'gradelevel' => $gradeLevel,
+							'courseName' => $courseName,
+							'student_id' => $student_id,
+							'id' => $course_id,
+							'studentName' => $studentName,
+							'created_at' => $created_at
+							])
+					->update(['book'.$index.'score' => $bookScore[$index]]);
+			}			
+			$finalScore = 0;
+			if($numBooks > 0)
+				$finalScore = $bookScoreSum/$numBooks;
+			Course::where([
+				           'gradelevel' => $gradeLevel,
 						   'courseName' => $courseName,
-					       'studentName' => $studentName])
-				  ->update(['book'.$i.'score' => $bookScore[$i]]);
-			}
-			$finalScore = $bookScoreSum/$numBooks;
-			Course::where(['gradelevel' => $gradeLevel,
-						   'courseName' => $courseName,
-					       'studentName' => $studentName])
+						   'student_id' => $student_id,
+						   'id' => $course_id,
+						   'studentName' => $studentName,
+						   'created_at' => $created_at])
 				  ->update(['finalScore' => $finalScore]);
+
+			$index++;
 		}
 		// Update Student Record with Overall Grade Score
 		$coursesPerGrade = Course::where(['studentName' => $studentName,
@@ -118,20 +221,21 @@ class CourseController extends Controller
 		}					  
 	    //Calculate Grade Scores over all courses and put in Student table
 		Student::where(['name' => $studentName])
-		  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);
+		  ->update([$gradeScores[$gradeLevel] => $sumGradeScore/count($coursesPerGrade)]);	
 		
-		$jsonString = json_encode($jaySonObj);
-		$fileName = str_replace(' ','',str_replace('.','',str_replace('_','',$studentName."_".$gradeLevel."_".$courseName))).".txt";
-	
-		 
-		$result = Storage::put($fileName, $jsonString);
-		return view('courseViewer'); 
+		if($rebuild == 'yes')
+			return;
+		else{
+			$jsonString = json_encode($jaySonObj);
+			$fileName = str_replace(' ', '', str_replace('.', '', str_replace('_', '', $studentName . "_" . $gradeLevel . "_" . $courseName))) . ".txt";			 
+			$result = Storage::put($fileName, $jsonString);
+			return view('courseViewer'); 
+			}
 		
 	}
 	 
 	 public function checkStudent(Request $request){
 		 $studentAttr = json_decode($request->input('studentAttr'),true);
-		 //print_r($studentAttr);
 		 $studentName = $studentAttr['studentName'];
 		 $grade = $studentAttr['gradeLevel'];
 		 $course = $studentAttr['courseName'];
@@ -344,10 +448,10 @@ class CourseController extends Controller
 	 }
 	 
 	 public function reportCard(Request $request){
+		 
 		 $studentName = $request->input('studentName');
 		 $courses = Course::where('studentName',$studentName)
 						  ->orderBy('gradeLevel','asc')->get();
-			
          $students = Student::where('name',$studentName)->get();
 		 if(count($courses) <= 0)
 			 return view('courseViewer');
@@ -382,4 +486,22 @@ class CourseController extends Controller
 		 $snappy->generateFromHtml($page,$filePath);
 				  
 	 }
+
+	public function renewDatabase(Request $request){
+		$path=  public_path('scores');
+		//$path = base_path() . '/pdf/';
+		$files = File::files($path);
+		$courseScores = array();
+		$bookScore = (object) array();
+		
+
+		for($i = 0;$i < count($files);$i++){
+	
+			$contents = File::get($files[$i]);
+			$contents = json_decode($contents);
+			$contents = (object) $contents;
+			$courseScores[$i] = $contents;
+		}
+		echo json_encode(array("courseScores" => $courseScores));
+	}
 }
